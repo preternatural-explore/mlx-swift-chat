@@ -13,8 +13,8 @@ This project is a fully native SwiftUI app that allows you to run local LLMs (e.
 
 ## Installation
 
-1. Open the Xcode project
-2. Go to **Signing & Capabilities**
+1. Open the Xcode project.
+2. Go to **Signing & Capabilities**.
 3. Change the **Team** to your own team.
 4. Set the destination to **My Mac**.
 5. Click **Run**.
@@ -64,8 +64,8 @@ No. This is not intended for deploying into production.
 
 ### What are the minimum hardware and software requirements?
 
-- Apple Silicon Mac (M1/M2/M3) with macOS 14.0 or newer
-- Any A-Series chip (iPad, iPhone) with iOS 17.2 or newer
+- Apple Silicon Mac (M1/M2/M3) with macOS 14.0 or newer.
+- Any A-Series chip (iPad, iPhone) with iOS 17.2 or newer.
 
 ### Does this collect any data?
 
