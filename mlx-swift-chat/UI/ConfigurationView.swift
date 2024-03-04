@@ -15,6 +15,8 @@ struct ConfigurationView: View {
     var body: some View {
         VStack {
             Form {
+                huggingFaceTokenField
+                
                 CompletionParametersView(
                     configuration: $runner.configuration.withDefaultValue(.init(maxNewTokens: 0)),
                     model: runner.llm

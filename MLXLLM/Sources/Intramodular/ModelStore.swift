@@ -186,6 +186,18 @@ extension ModelStore {
             self.models[index] = newValue
         }
     }
+    
+    public subscript(
+        _modelWithName name: String
+    ) -> Model {
+        get {
+            self.models.first(where: { $0.name == name })!
+        } set {
+            let index = self.models.firstIndex(where: { $0.name == name })!
+            
+            self.models[index] = newValue
+        }
+    }
 
     public func delete(
         _ model: Model.ID
@@ -233,7 +245,11 @@ extension ModelStore {
                     state: isDownloaded ? .downloaded : .notDownloaded
                 )
                 
-                self.models.append(model)
+                if self.containsModel(named: model.name) {
+                    self[_modelWithName: model.name] = model
+                } else {
+                    self.models.append(model)
+                }
             }
         } catch {
             print("Error loading models from disk: \(error)")
@@ -263,34 +279,43 @@ extension ModelStore {
     public func loadTokenizer(
         for model: Model.ID
     ) async throws -> Tokenizers.Tokenizer {
-        let config = LanguageModelConfigurationFromHub(modelName: model)
+        var model: String = await self[_model: model].name
         
-        guard var tokenizerConfig = try await config.tokenizerConfig else {
-            throw Error(message: "missing config")
+        if model == "mlx-community/stablelm-2-zephyr-1_6b-4bit" {
+            model = "stabilityai/stablelm-2-zephyr-1_6b"
         }
-        
-        var tokenizerData = try await config.tokenizerData
-        
-        if let tokenizerClass = tokenizerConfig.tokenizerClass?.stringValue,
-           let replacement = replacementTokenizers[tokenizerClass] {
-            var dictionary = tokenizerConfig.dictionary
-            dictionary["tokenizer_class"] = replacement
-            tokenizerConfig = Config(dictionary)
-        }
-        
-        if let tokenizerClass = tokenizerConfig.tokenizerClass?.stringValue {
-            switch tokenizerClass {
-                case "T5Tokenizer":
-                    break
-                default:
-                    tokenizerData = discardUnhandledMerges(tokenizerData: tokenizerData)
+        do {
+            let config = LanguageModelConfigurationFromHub(modelName: model)
+            
+            guard var tokenizerConfig = try await config.tokenizerConfig else {
+                throw Error(message: "missing config")
             }
+            
+            var tokenizerData = try await config.tokenizerData
+            
+            if let tokenizerClass = tokenizerConfig.tokenizerClass?.stringValue,
+               let replacement = replacementTokenizers[tokenizerClass] {
+                var dictionary = tokenizerConfig.dictionary
+                dictionary["tokenizer_class"] = replacement
+                tokenizerConfig = Config(dictionary)
+            }
+            
+            if let tokenizerClass = tokenizerConfig.tokenizerClass?.stringValue {
+                switch tokenizerClass {
+                    case "T5Tokenizer":
+                        break
+                    default:
+                        tokenizerData = discardUnhandledMerges(tokenizerData: tokenizerData)
+                }
+            }
+            
+            return try PreTrainedTokenizer(
+                tokenizerConfig: tokenizerConfig,
+                tokenizerData: tokenizerData
+            )
+        } catch {
+            return try await AutoTokenizer.from(pretrained: model)
         }
-        
-        return try PreTrainedTokenizer(
-            tokenizerConfig: tokenizerConfig,
-            tokenizerData: tokenizerData
-        )
     }
     
     private func discardUnhandledMerges(

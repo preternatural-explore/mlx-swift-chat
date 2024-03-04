@@ -7,6 +7,7 @@ public enum ModelType: String, Codable {
     case llama
     case phi
     case gemma
+    case stableLM = "stablelm_epoch"
     
     func createModel(
         configuration: URL
@@ -33,6 +34,13 @@ public enum ModelType: String, Codable {
                 )
                 
                 return GemmaModel(configuration)
+            case .stableLM:
+                let configuration = try JSONDecoder().decode(
+                    StableLMConfiguration.self,
+                    from: Data(contentsOf: configuration)
+                )
+                
+                return StableLMModel(config: configuration)
         }
     }
 }
