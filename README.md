@@ -81,6 +81,7 @@ No. Everything is run locally on device.
 
 ## Acknowledgements
 
+- [buh/CompactSlider](https://github.com/buh/CompactSlider)
 - [ml-explore/mlx-swift](https://github.com/ml-explore/mlx-swift)
 - [huggingface/swift-chat](https://github.com/huggingface/swift-chat)
 
