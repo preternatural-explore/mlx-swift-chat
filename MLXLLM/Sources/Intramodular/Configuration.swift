@@ -7,7 +7,7 @@ public enum ModelType: String, Codable {
     case llama
     case phi
     case gemma
-    case stableLM = "stablelm_epoch"
+    case stableLM = "stablelm"
     
     func createModel(
         configuration: URL

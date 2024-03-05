@@ -42,7 +42,7 @@ private class Attention: Module {
         self._wq.wrappedValue = Linear(hiddenSize, heads * headDim, bias: args.useQKVBias)
         self._wk.wrappedValue = Linear(hiddenSize, kvHeads * headDim, bias: args.useQKVBias)
         self._wv.wrappedValue = Linear(hiddenSize, kvHeads * headDim, bias: args.useQKVBias)
-        self._dense.wrappedValue = Linear(heads * headDim, hiddenSize, bias: false)
+        self._dense.wrappedValue = Linear(heads * headDim, hiddenSize, bias: true)
         
         self.rope = RoPE(
             dimensions: Int(args.partialRotaryFactor * Float(headDim)), 
@@ -52,14 +52,16 @@ private class Attention: Module {
     }
     
     public func callAsFunction(
-        _ x: MLXArray, mask: MLXArray? = nil, cache: (MLXArray, MLXArray)? = nil
+        _ x: MLXArray,
+        mask: MLXArray? = nil,
+        cache: (MLXArray, MLXArray)? = nil
     ) -> (MLXArray, (MLXArray, MLXArray)) {
-        let (B, L) = (x.dim(0), x.dim(1))
-        
         var queries = wq(x)
         var keys = wk(x)
         var values = wv(x)
         
+        let (B, L, _) = (x.dim(0), x.dim(1), x.dim(2))
+
         // prepare the queries, keys and values for the attention computation
         queries = queries.reshaped(B, L, heads, headDim).transposed(0, 2, 1, 3)
         keys = keys.reshaped(B, L, args.kvHeads, headDim).transposed(0, 2, 1, 3)
@@ -87,13 +89,14 @@ private class Attention: Module {
         // Finally perform the attention computation
         let scale = sqrt(1 / Float(queries.dim(-1)))
         var scores = (queries * scale).matmul(keys.transposed(0, 1, 3, 2))
+        
         if let mask {
             scores = scores + mask
         }
         
         scores = softMax(scores, axis: -1).asType(values.dtype)
-        let valuesHat = matmul(scores, values).transposed(0, 2, 1, 3).reshaped(B, L, -1)
-        
+        let valuesHat = (scores.matmul(values)).transposed(0, 2, 1, 3).reshaped(B, L, -1)
+    
         return (dense(valuesHat), (keys, values))
     }
 }
@@ -125,9 +128,18 @@ private class DecoderLayer: Module {
 
     init(_ config: StableLMConfiguration) {
         self._selfAttention.wrappedValue = Attention(config)
-        self.mlp = MLP(dim: config.hiddenSize, hiddenDim: config.intermediateSize)
-        self._inputLayerNorm.wrappedValue = LayerNorm(dimensions: config.hiddenSize, eps: config.layerNormEps)
-        self._postAttentionLayerNorm.wrappedValue = LayerNorm(dimensions: config.hiddenSize, eps: config.layerNormEps)
+        self.mlp = MLP(
+            dim: config.hiddenSize,
+            hiddenDim: config.intermediateSize
+        )
+        self._inputLayerNorm.wrappedValue = LayerNorm(
+            dimensions: config.hiddenSize,
+            eps: config.layerNormEps
+        )
+        self._postAttentionLayerNorm.wrappedValue = LayerNorm(
+            dimensions: config.hiddenSize,
+            eps: config.layerNormEps
+        )
     }
     
     public func callAsFunction(
@@ -137,9 +149,8 @@ private class DecoderLayer: Module {
     ) -> (MLXArray, (MLXArray, MLXArray)) {
         let h = inputLayerNorm(x)
         let (attentionH, cache) = selfAttention(h, mask: mask, cache: cache)
-        let ffH = mlp(postAttentionLayerNorm(attentionH + h))
-        
-        return (ffH + h, cache)
+        let ffH = mlp(h)
+        return (attentionH + ffH + x, cache)
     }
 }
 
@@ -149,9 +160,18 @@ private class StableLMModelInner: Module {
     @ModuleInfo(key: "final_layernorm") var finalLayerNorm: LayerNorm
     
     init(_ config: StableLMConfiguration) {
-        self._embedTokens.wrappedValue = Embedding(embeddingCount: config.vocabSize, dimensions: config.hiddenSize)
-        self.layers = (0..<config.numHiddenLayers).map { _ in DecoderLayer(config) }
-        self._finalLayerNorm.wrappedValue = LayerNorm(dimensions: config.hiddenSize, eps: config.layerNormEps)
+        self._embedTokens.wrappedValue = Embedding(
+            embeddingCount: config.vocabSize,
+            dimensions: config.hiddenSize
+        )
+        self.layers = (0 ..< config.numHiddenLayers)
+            .map { _ in
+                DecoderLayer(config)
+            }
+        self._finalLayerNorm.wrappedValue = LayerNorm(
+            dimensions: config.hiddenSize,
+            eps: config.layerNormEps
+        )
     }
     
     public func callAsFunction(
@@ -185,7 +205,7 @@ public class StableLMModel: Module, LLMModel {
         self._lmHead.wrappedValue = Linear(
             config.hiddenSize,
             config.vocabSize,
-            bias: true
+            bias: false
         )
     }
     
@@ -246,9 +266,9 @@ public struct StableLMConfiguration: Codable {
         case attentionHeads = "num_attention_heads"
         case numHiddenLayers = "num_hidden_layers"
         case kvHeads = "num_key_value_heads"
-        case partialRotaryFactor = "rope_pct"
+        case partialRotaryFactor = "partial_rotary_factor"
         case intermediateSize = "intermediate_size"
-        case layerNormEps = "norm_eps"
+        case layerNormEps = "layer_norm_eps"
         case ropeTheta = "rope_theta"
         case useQKVBias = "use_qkv_bias"
     }

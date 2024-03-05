@@ -45,8 +45,10 @@ private class PhiAttention: Module {
         self._dense.wrappedValue = Linear(heads * headDim, hiddenSize, bias: true)
 
         self.rope = RoPE(
-            dimensions: Int(args.partialRotaryFactor * Float(headDim)), traditional: false,
-            base: args.ropeTheta)
+            dimensions: Int(args.partialRotaryFactor * Float(headDim)),
+            traditional: false,
+            base: args.ropeTheta
+        )
     }
 
     public func callAsFunction(
@@ -145,21 +147,25 @@ private class PhiModelInner: Module {
 
     public init(_ args: PhiConfiguration) {
         self._embedTokens.wrappedValue = Embedding(
-            embeddingCount: args.vocabularySize, dimensions: args.hiddenSize)
+            embeddingCount: args.vocabularySize,
+            dimensions: args.hiddenSize
+        )
 
         self.layers = (0 ..< args.hiddenLayers)
             .map { _ in
                 PhiDecoderLayer(args)
             }
         self._finalLayerNorm.wrappedValue = LayerNorm(
-            dimensions: args.hiddenSize, eps: args.layerNormEps)
+            dimensions: args.hiddenSize,
+            eps: args.layerNormEps
+        )
     }
 
     public func callAsFunction(
-        _ x: MLXArray, mask: MLXArray? = nil, cache: [(MLXArray, MLXArray)]? = nil
-    ) -> (
-        MLXArray, [(MLXArray, MLXArray)]
-    ) {
+        _ x: MLXArray,
+        mask: MLXArray? = nil,
+        cache: [(MLXArray, MLXArray)]? = nil
+    ) -> (MLXArray, [(MLXArray, MLXArray)]) {
         var x = embedTokens(x)
 
         var newCache = [(MLXArray, MLXArray)]()
@@ -188,9 +194,10 @@ public class PhiModel: Module, LLMModel {
         self._lmHead.wrappedValue = Linear(args.hiddenSize, args.vocabularySize, bias: true)
     }
 
-    public func callAsFunction(_ x: MLXArray, cache: [(MLXArray, MLXArray)]?) -> (
-        MLXArray, [(MLXArray, MLXArray)]
-    ) {
+    public func callAsFunction(
+        _ x: MLXArray,
+        cache: [(MLXArray, MLXArray)]?
+    ) -> (MLXArray, [(MLXArray, MLXArray)]) {
         var mask: MLXArray? = nil
         if x.dim(1) > 1 {
             mask = MultiHeadAttention.createAdditiveCausalMask(x.dim(1))
