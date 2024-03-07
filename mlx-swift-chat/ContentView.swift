@@ -144,5 +144,6 @@ struct PromptAndCompletionView: View {
             .multilineTextAlignment(.leading)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
+            .textSelection(.enabled)
     }
 }
