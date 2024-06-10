@@ -1,4 +1,4 @@
-# mlx-swift-chat
+# MLX Swift Chat: Run LLM models locally with MLX!
 
 https://github.com/PreternaturalAI/mlx-swift-chat/assets/8635253/f20862f3-8cab-4803-ba6e-44108b075c9b
 
