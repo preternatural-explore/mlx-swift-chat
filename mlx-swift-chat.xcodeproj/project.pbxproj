@@ -17,6 +17,7 @@
 		46D9040D2B8D86D000E47A6D /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D9040C2B8D86D000E47A6D /* ConfigurationView.swift */; };
 		46E954C02B8D3C23009F5080 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E954BF2B8D3C23009F5080 /* App.swift */; };
 		46E954C42B8D3C24009F5080 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46E954C32B8D3C24009F5080 /* Assets.xcassets */; };
+		FB0BE6E12C6764DD00F931B0 /* SilderStyleConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0BE6E02C6764DD00F931B0 /* SilderStyleConfigurations.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		46E954BF2B8D3C23009F5080 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		46E954C32B8D3C24009F5080 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		46E954C52B8D3C24009F5080 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		FB0BE6E02C6764DD00F931B0 /* SilderStyleConfigurations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SilderStyleConfigurations.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +52,7 @@
 			isa = PBXGroup;
 			children = (
 				460B58792B8D456F00AE706C /* CompletionParametersView.swift */,
+				FB0BE6E02C6764DD00F931B0 /* SilderStyleConfigurations.swift */,
 				46D9040C2B8D86D000E47A6D /* ConfigurationView.swift */,
 				46D9040A2B8D85CA00E47A6D /* ModelsView.swift */,
 				460B58782B8D456F00AE706C /* StatusView.swift */,
@@ -169,6 +172,7 @@
 				460B587C2B8D456F00AE706C /* CompletionParametersView.swift in Sources */,
 				46E954C02B8D3C23009F5080 /* App.swift in Sources */,
 				460B587B2B8D456F00AE706C /* StatusView.swift in Sources */,
+				FB0BE6E12C6764DD00F931B0 /* SilderStyleConfigurations.swift in Sources */,
 				46D9040B2B8D85CA00E47A6D /* ModelsView.swift in Sources */,
 				46D9040D2B8D86D000E47A6D /* ConfigurationView.swift in Sources */,
 			);
@@ -302,7 +306,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = 4PWQ7VFGWM;
+				DEVELOPMENT_TEAM = 6PPLU9GFJ6;
 				EAGER_LINKING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -323,7 +327,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.vmanot.mlx-swift-chat";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ookamitai.mlx-swift-chat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -343,7 +347,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = 4PWQ7VFGWM;
+				DEVELOPMENT_TEAM = 6PPLU9GFJ6;
 				EAGER_LINKING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -363,7 +367,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.vmanot.mlx-swift-chat";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ookamitai.mlx-swift-chat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";

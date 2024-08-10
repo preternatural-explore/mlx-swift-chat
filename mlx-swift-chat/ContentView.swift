@@ -36,7 +36,7 @@ struct ContentView: View {
                         .shadow(radius: 4)
                     
                     Text("MLX Swift")
-                        .font(.title)
+                        .font(.title3)
                 }
                 .padding(.horizontal)
             }

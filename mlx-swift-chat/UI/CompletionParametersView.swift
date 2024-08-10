@@ -65,6 +65,7 @@ struct CompletionParametersView: View {
             Spacer()
             Text("\(configuration.topK)")
         }
+        .compactSliderStyle(.general)
         .compactSliderSecondaryColor(.blue)
         .disabled(!configuration.doSample)
         .help(
@@ -78,14 +79,8 @@ struct CompletionParametersView: View {
             Spacer()
             Text("\(configuration.temperature, specifier: "%.2f")")
         }
-        .compactSliderStyle(
-            .prominent(
-                lowerColor: .blue,
-                upperColor: .red,
-                useGradientBackground: true
-            )
-        )
-        .compactSliderSecondaryColor(configuration.temperature <= 0.5 ? .blue : .red)
+        .compactSliderStyle(.temp)
+        .compactSliderSecondaryColor(configuration.temperature <= 1 ? .blue : .red)
         .disabled(!configuration.doSample)
         .help(
             "Controls randomness: Lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive."
@@ -109,6 +104,7 @@ struct CompletionParametersView: View {
             
             Text("\(Int(configuration.maxNewTokens))")
         }
+        .compactSliderStyle(.general)
         .compactSliderSecondaryColor(.blue)
         .help(
             "The maximum number of tokens to generate. Requests can use up to 2,048 tokens shared between prompt and completion. The exact limit varies by model. (One token is roughly 4 characters for normal English text)"
