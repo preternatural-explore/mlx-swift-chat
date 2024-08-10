@@ -83,7 +83,7 @@ struct CompletionParametersView: View {
         .compactSliderSecondaryColor(configuration.temperature <= 1 ? .blue : .red)
         .disabled(!configuration.doSample)
         .help(
-            "Controls randomness: Lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive."
+            "Control randomness: Lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive."
         )
     }
     
