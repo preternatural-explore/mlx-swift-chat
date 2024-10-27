@@ -94,7 +94,7 @@ class RunnableMLXModel: RunnableLLM {
         for token in TokenIterator(
             prompt: promptArray,
             model: model,
-            temp: Float(config.temperature)
+            temperature: Float(config.temperature)
         ) {
             let tokenId = token.item(Int.self)
             

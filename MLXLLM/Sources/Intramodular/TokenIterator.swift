@@ -18,26 +18,30 @@ private func sample(logits: MLXArray, temp: Float) -> MLXArray {
 /// Port of `generate_step()` from https://github.com/ml-explore/mlx-examples/blob/main/llms/mlx_lm/utils.py
 public struct TokenIterator: Sequence, IteratorProtocol {
     let model: LLMModel
-    let temp: Float
+    let temperature: Float
 
-    var y: MLXArray
+    var tokens: MLXArray
     var cache: [(MLXArray, MLXArray)]
 
     var first = true
 
-    public init(prompt: MLXArray, model: LLMModel, temp: Float = 0.0) {
+    public init(
+        prompt: MLXArray,
+        model: LLMModel,
+        temperature: Float = 0.0
+    ) {
         self.model = model
-        self.temp = temp
-        self.y = prompt
+        self.temperature = temperature
+        self.tokens = prompt
         self.cache = []
     }
-
+    
     mutating public func next() -> MLXArray? {
         var logits: MLXArray
-        (logits, cache) = model(expandedDimensions(y, axis: 0), cache: cache.isEmpty ? nil : cache)
-        y = sample(logits: logits[-1, axis: 1], temp: temp)
-
-        return y
+        (logits, cache) = model(expandedDimensions(tokens, axis: 0), cache: cache.isEmpty ? nil : cache)
+        tokens = sample(logits: logits[-1, axis: 1], temp: temperature)
+        
+        return tokens
     }
 }
 
